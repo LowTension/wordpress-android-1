@@ -6,10 +6,12 @@ import android.text.*;
 import android.view.*;
 import android.widget.*;
 import java.util.*;
+import android.view.animation.*;
 
 public class ReciclerViewAdapter extends RecyclerView.Adapter<ReciclerViewAdapter.PostViewHolder>
 {
 	ArrayList<WP_Post> listPosts;
+	int lastPosition = -1;
 
 	ReciclerViewAdapter(ArrayList<WP_Post> posts)
 	{
@@ -30,7 +32,19 @@ public class ReciclerViewAdapter extends RecyclerView.Adapter<ReciclerViewAdapte
 		holder.postTitle.setText(listPosts.get(i).title);
 		holder.postExcerpt.setText(Html.fromHtml(listPosts.get(i).excerpt));
 		holder.postPublishDate.setText("Publicado el: " + listPosts.get(i).publishDate);
+		setAnimation(holder.cv, i);
 	}
+	
+	private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(viewToAnimate.getContext(), android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
 
 	@Override
 	public int getItemCount()
