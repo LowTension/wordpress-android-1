@@ -1,7 +1,8 @@
 package cl.skar.wordpress;
-import android.support.v7.app.*;
-import android.os.*;
-import android.widget.*;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 public class ViewPostActivity extends AppCompatActivity
 {
@@ -15,7 +16,7 @@ public class ViewPostActivity extends AppCompatActivity
 		setContentView(R.layout.view_post);
 		Bundle extra = getIntent().getExtras();
 		if(extra != null){
-			postID = extra.get("postID");
+			postID = Integer.parseInt(extra.get("postID").toString());
 		}
 		Toast.makeText(getApplicationContext(),"post id: "+postID,Toast.LENGTH_SHORT).show();
 	}
