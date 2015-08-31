@@ -1,6 +1,8 @@
 package cl.skar.wordpress;
 
+import android.content.*;
 import android.os.*;
+import android.support.v4.widget.*;
 import android.support.v7.app.*;
 import android.support.v7.widget.*;
 import android.util.*;
@@ -15,6 +17,8 @@ public class MainActivity extends AppCompatActivity
 	private Toolbar toolbar;
 	RecyclerView rv;
 	ArrayList<WP_Post> listPosts = new ArrayList<WP_Post>();
+	SwipeRefreshLayout srl;
+	ReciclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -23,7 +27,27 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.main);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		JSONTask jt = new JSONTask(this){
+		srl = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+		srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+				@Override
+				public void onRefresh()
+				{
+					// TODO: Implement this method
+					cargarPosts();
+				}
+			});
+		srl.setColorScheme(R.color.material_blue_grey_900, R.color.material_deep_teal_200, R.color.md_indigo_400);
+		rv = (RecyclerView) srl.findViewById(R.id.rv);
+		LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+		rv.setLayoutManager(llm);
+		cargarPosts();
+	}
+
+	private void cargarPosts()
+	{
+		Context c = (!srl.isRefreshing()) ?this: null;
+		listPosts.clear();
+		JSONTask jt = new JSONTask(c){
 			@Override
 			public void onPostExecute(String s)
 			{
@@ -34,9 +58,9 @@ public class MainActivity extends AppCompatActivity
 				}
 				catch (JSONException e)
 				{
-					Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 					Log.e("MainActivity", e.getMessage(), e);
-					
+
 				}
 				for (int i= 0; i < posts.length(); i++)
 				{
@@ -49,28 +73,31 @@ public class MainActivity extends AppCompatActivity
 						String excerpt = post.getJSONObject("excerpt").getString("rendered");
 						String publishDate = post.getString("date");
 						//Toast.makeText(getApplicationContext(),title+excerpt+publishDate,Toast.LENGTH_LONG).show();
-						listPosts.add(new WP_Post(id,title, excerpt, publishDate));
+						listPosts.add(new WP_Post(id, title, excerpt, publishDate));
 
 					}
 					catch (JSONException e)
 					{
-						Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+						Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 						Log.e("MainActivity", e.getMessage(), e);
-						
+
 					}
 				}
-				ReciclerViewAdapter adapter = new ReciclerViewAdapter(listPosts);
+				//if(adapter != null) adapter.clear();
+				adapter = new ReciclerViewAdapter(listPosts);
+				adapter.notifyDataSetChanged();
 				rv.setAdapter(adapter);
-				pd.dismiss();
+				if (pd != null && pd.isShowing())
+				{
+					pd.dismiss();
+				}
+				else
+				{
+					srl.setRefreshing(false);
+				}
 			}
 		};
-		rv = (RecyclerView) findViewById(R.id.rv);
-		rv.setHasFixedSize(true);
-		LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-		rv.setLayoutManager(llm);
 		jt.execute("http://www.diasfertiles.cl/wp-json/wp/v2/posts");
-		
-
 	}
 
 }
