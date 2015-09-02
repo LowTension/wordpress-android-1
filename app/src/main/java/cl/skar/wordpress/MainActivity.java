@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
 					cargarPosts();
 				}
 			});
-		srl.setColorScheme(R.color.material_blue_grey_900, R.color.material_deep_teal_200, R.color.md_indigo_400);
+		srl.setColorSchemeResources(R.color.material_blue_grey_900, R.color.material_deep_teal_200, R.color.md_indigo_400);
 		rv = (RecyclerView) srl.findViewById(R.id.rv);
 		LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
 		rv.setLayoutManager(llm);
