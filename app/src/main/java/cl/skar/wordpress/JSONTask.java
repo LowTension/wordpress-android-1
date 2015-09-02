@@ -1,7 +1,8 @@
 package cl.skar.wordpress;
-import android.os.*;
+
 import android.app.*;
 import android.content.*;
+import android.os.*;
 
 public class JSONTask extends AsyncTask<String,Void,String>
 {
@@ -13,15 +14,18 @@ public class JSONTask extends AsyncTask<String,Void,String>
 		this.c = context;
 	}
 	
+	public JSONTask(){}
 	@Override
 	protected void onPreExecute()
 	{
 		// TODO: Implement this method
 		super.onPreExecute();
-		pd = new ProgressDialog(c);
-		pd.setMessage("Cargando...");
-		pd.setCancelable(false);
-		pd.show();
+		if(this.c != null){
+			pd = new ProgressDialog(c);
+			pd.setMessage("Cargando...");
+			pd.setCancelable(false);
+			pd.show();
+		}
 	}
 	
 	@Override

@@ -3,5 +3,5 @@
 
     <string name="app_name">WordPress</string>
     <string name="hello_world">Hello world!</string>
-
+	<string name="search_title">Buscar</string>
 </resources>
