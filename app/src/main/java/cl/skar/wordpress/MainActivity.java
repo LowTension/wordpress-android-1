@@ -1,17 +1,19 @@
 package cl.skar.wordpress;
 
+import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.support.v4.widget.*;
 import android.support.v7.app.*;
 import android.support.v7.widget.*;
 import android.util.*;
+import android.view.*;
 import android.widget.*;
 import java.util.*;
 import org.json.*;
 
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
 
 public class MainActivity extends AppCompatActivity 
 {
@@ -42,12 +44,40 @@ public class MainActivity extends AppCompatActivity
 		LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
 		rv.setLayoutManager(llm);
 		cargarPosts();
+		handleIntent(getIntent());
 	}
-	
+
+	protected void onNewIntent(Intent intent)
+	{
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent)
+	{
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()))
+		{
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            // Do work using string
+            Toast.makeText(getApplicationContext(), query, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.menu, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+			(SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+			(SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+			searchManager.getSearchableInfo(getComponentName()));
+		searchView.setSubmitButtonEnabled(true);
+		searchView.setIconifiedByDefault(true);
+		searchView.setMaxWidth(1000);
+
 
 		return true;
 	}
